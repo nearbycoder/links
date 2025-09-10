@@ -8,7 +8,7 @@ export const auth = betterAuth({
     enabled: true,
   },
   database: prismaAdapter(db, {
-    provider: 'sqlite', // or "mysql", "postgresql", ...etc
+    provider: 'sqlite',
   }),
   trustedOrigins: ['http://0.0.0.0:3000', 'http://192.168.68.77:3000'],
 })
