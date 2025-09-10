@@ -11,13 +11,37 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TagsRouteImport } from './routes/tags'
+import { Route as LinksRouteImport } from './routes/links'
+import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { ServerRoute as ApiTagsServerRouteImport } from './routes/api/tags'
+import { ServerRoute as ApiLinksServerRouteImport } from './routes/api/links'
+import { ServerRoute as ApiCategoriesServerRouteImport } from './routes/api/categories'
+import { ServerRoute as ApiTagsTagIdServerRouteImport } from './routes/api/tags/$tagId'
+import { ServerRoute as ApiLinksLinkIdServerRouteImport } from './routes/api/links/$linkId'
+import { ServerRoute as ApiCategoriesCategoryIdServerRouteImport } from './routes/api/categories/$categoryId'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
 const rootServerRouteImport = createServerRootRoute()
 
+const TagsRoute = TagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LinksRoute = LinksRouteImport.update({
+  id: '/links',
+  path: '/links',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesRoute = CategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -33,6 +57,37 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTagsServerRoute = ApiTagsServerRouteImport.update({
+  id: '/api/tags',
+  path: '/api/tags',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiLinksServerRoute = ApiLinksServerRouteImport.update({
+  id: '/api/links',
+  path: '/api/links',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiCategoriesServerRoute = ApiCategoriesServerRouteImport.update({
+  id: '/api/categories',
+  path: '/api/categories',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiTagsTagIdServerRoute = ApiTagsTagIdServerRouteImport.update({
+  id: '/$tagId',
+  path: '/$tagId',
+  getParentRoute: () => ApiTagsServerRoute,
+} as any)
+const ApiLinksLinkIdServerRoute = ApiLinksLinkIdServerRouteImport.update({
+  id: '/$linkId',
+  path: '/$linkId',
+  getParentRoute: () => ApiLinksServerRoute,
+} as any)
+const ApiCategoriesCategoryIdServerRoute =
+  ApiCategoriesCategoryIdServerRouteImport.update({
+    id: '/$categoryId',
+    path: '/$categoryId',
+    getParentRoute: () => ApiCategoriesServerRoute,
+  } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -41,57 +96,146 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/categories': typeof CategoriesRoute
+  '/links': typeof LinksRoute
+  '/tags': typeof TagsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/sign-up': typeof AuthSignUpRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/categories': typeof CategoriesRoute
+  '/links': typeof LinksRoute
+  '/tags': typeof TagsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/sign-up': typeof AuthSignUpRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/categories': typeof CategoriesRoute
+  '/links': typeof LinksRoute
+  '/tags': typeof TagsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/sign-up': typeof AuthSignUpRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth/login' | '/auth/sign-up'
+  fullPaths:
+    | '/'
+    | '/categories'
+    | '/links'
+    | '/tags'
+    | '/auth/login'
+    | '/auth/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/login' | '/auth/sign-up'
-  id: '__root__' | '/' | '/auth/login' | '/auth/sign-up'
+  to: '/' | '/categories' | '/links' | '/tags' | '/auth/login' | '/auth/sign-up'
+  id:
+    | '__root__'
+    | '/'
+    | '/categories'
+    | '/links'
+    | '/tags'
+    | '/auth/login'
+    | '/auth/sign-up'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CategoriesRoute: typeof CategoriesRoute
+  LinksRoute: typeof LinksRoute
+  TagsRoute: typeof TagsRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
 }
 export interface FileServerRoutesByFullPath {
+  '/api/categories': typeof ApiCategoriesServerRouteWithChildren
+  '/api/links': typeof ApiLinksServerRouteWithChildren
+  '/api/tags': typeof ApiTagsServerRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/categories/$categoryId': typeof ApiCategoriesCategoryIdServerRoute
+  '/api/links/$linkId': typeof ApiLinksLinkIdServerRoute
+  '/api/tags/$tagId': typeof ApiTagsTagIdServerRoute
 }
 export interface FileServerRoutesByTo {
+  '/api/categories': typeof ApiCategoriesServerRouteWithChildren
+  '/api/links': typeof ApiLinksServerRouteWithChildren
+  '/api/tags': typeof ApiTagsServerRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/categories/$categoryId': typeof ApiCategoriesCategoryIdServerRoute
+  '/api/links/$linkId': typeof ApiLinksLinkIdServerRoute
+  '/api/tags/$tagId': typeof ApiTagsTagIdServerRoute
 }
 export interface FileServerRoutesById {
   __root__: typeof rootServerRouteImport
+  '/api/categories': typeof ApiCategoriesServerRouteWithChildren
+  '/api/links': typeof ApiLinksServerRouteWithChildren
+  '/api/tags': typeof ApiTagsServerRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/categories/$categoryId': typeof ApiCategoriesCategoryIdServerRoute
+  '/api/links/$linkId': typeof ApiLinksLinkIdServerRoute
+  '/api/tags/$tagId': typeof ApiTagsTagIdServerRoute
 }
 export interface FileServerRouteTypes {
   fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/auth/$'
+  fullPaths:
+    | '/api/categories'
+    | '/api/links'
+    | '/api/tags'
+    | '/api/auth/$'
+    | '/api/categories/$categoryId'
+    | '/api/links/$linkId'
+    | '/api/tags/$tagId'
   fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/auth/$'
-  id: '__root__' | '/api/auth/$'
+  to:
+    | '/api/categories'
+    | '/api/links'
+    | '/api/tags'
+    | '/api/auth/$'
+    | '/api/categories/$categoryId'
+    | '/api/links/$linkId'
+    | '/api/tags/$tagId'
+  id:
+    | '__root__'
+    | '/api/categories'
+    | '/api/links'
+    | '/api/tags'
+    | '/api/auth/$'
+    | '/api/categories/$categoryId'
+    | '/api/links/$linkId'
+    | '/api/tags/$tagId'
   fileServerRoutesById: FileServerRoutesById
 }
 export interface RootServerRouteChildren {
+  ApiCategoriesServerRoute: typeof ApiCategoriesServerRouteWithChildren
+  ApiLinksServerRoute: typeof ApiLinksServerRouteWithChildren
+  ApiTagsServerRoute: typeof ApiTagsServerRouteWithChildren
   ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tags': {
+      id: '/tags'
+      path: '/tags'
+      fullPath: '/tags'
+      preLoaderRoute: typeof TagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/links': {
+      id: '/links'
+      path: '/links'
+      fullPath: '/links'
+      preLoaderRoute: typeof LinksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -117,6 +261,48 @@ declare module '@tanstack/react-router' {
 }
 declare module '@tanstack/react-start/server' {
   interface ServerFileRoutesByPath {
+    '/api/tags': {
+      id: '/api/tags'
+      path: '/api/tags'
+      fullPath: '/api/tags'
+      preLoaderRoute: typeof ApiTagsServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/links': {
+      id: '/api/links'
+      path: '/api/links'
+      fullPath: '/api/links'
+      preLoaderRoute: typeof ApiLinksServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/categories': {
+      id: '/api/categories'
+      path: '/api/categories'
+      fullPath: '/api/categories'
+      preLoaderRoute: typeof ApiCategoriesServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/tags/$tagId': {
+      id: '/api/tags/$tagId'
+      path: '/$tagId'
+      fullPath: '/api/tags/$tagId'
+      preLoaderRoute: typeof ApiTagsTagIdServerRouteImport
+      parentRoute: typeof ApiTagsServerRoute
+    }
+    '/api/links/$linkId': {
+      id: '/api/links/$linkId'
+      path: '/$linkId'
+      fullPath: '/api/links/$linkId'
+      preLoaderRoute: typeof ApiLinksLinkIdServerRouteImport
+      parentRoute: typeof ApiLinksServerRoute
+    }
+    '/api/categories/$categoryId': {
+      id: '/api/categories/$categoryId'
+      path: '/$categoryId'
+      fullPath: '/api/categories/$categoryId'
+      preLoaderRoute: typeof ApiCategoriesCategoryIdServerRouteImport
+      parentRoute: typeof ApiCategoriesServerRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -127,8 +313,46 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
+interface ApiCategoriesServerRouteChildren {
+  ApiCategoriesCategoryIdServerRoute: typeof ApiCategoriesCategoryIdServerRoute
+}
+
+const ApiCategoriesServerRouteChildren: ApiCategoriesServerRouteChildren = {
+  ApiCategoriesCategoryIdServerRoute: ApiCategoriesCategoryIdServerRoute,
+}
+
+const ApiCategoriesServerRouteWithChildren =
+  ApiCategoriesServerRoute._addFileChildren(ApiCategoriesServerRouteChildren)
+
+interface ApiLinksServerRouteChildren {
+  ApiLinksLinkIdServerRoute: typeof ApiLinksLinkIdServerRoute
+}
+
+const ApiLinksServerRouteChildren: ApiLinksServerRouteChildren = {
+  ApiLinksLinkIdServerRoute: ApiLinksLinkIdServerRoute,
+}
+
+const ApiLinksServerRouteWithChildren = ApiLinksServerRoute._addFileChildren(
+  ApiLinksServerRouteChildren,
+)
+
+interface ApiTagsServerRouteChildren {
+  ApiTagsTagIdServerRoute: typeof ApiTagsTagIdServerRoute
+}
+
+const ApiTagsServerRouteChildren: ApiTagsServerRouteChildren = {
+  ApiTagsTagIdServerRoute: ApiTagsTagIdServerRoute,
+}
+
+const ApiTagsServerRouteWithChildren = ApiTagsServerRoute._addFileChildren(
+  ApiTagsServerRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CategoriesRoute: CategoriesRoute,
+  LinksRoute: LinksRoute,
+  TagsRoute: TagsRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthSignUpRoute: AuthSignUpRoute,
 }
@@ -136,6 +360,9 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 const rootServerRouteChildren: RootServerRouteChildren = {
+  ApiCategoriesServerRoute: ApiCategoriesServerRouteWithChildren,
+  ApiLinksServerRoute: ApiLinksServerRouteWithChildren,
+  ApiTagsServerRoute: ApiTagsServerRouteWithChildren,
   ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
 }
 export const serverRouteTree = rootServerRouteImport

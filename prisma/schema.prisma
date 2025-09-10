@@ -14,15 +14,18 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String     @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean    @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
+  links         Link[]
+  categories    Category[]
+  tags          Tag[]
 
   @@unique([email])
   @@map("user")
@@ -71,4 +74,61 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  color       String?  @default("#3b82f6")
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  links       Link[]
+
+  @@unique([userId, name])
+  @@map("category")
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String
+  color     String?   @default("#6b7280")
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  links     LinkTag[]
+
+  @@unique([userId, name])
+  @@map("tag")
+}
+
+model Link {
+  id          String    @id @default(cuid())
+  title       String
+  url         String
+  description String?
+  favicon     String?
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  tags        LinkTag[]
+
+  @@map("link")
+}
+
+model LinkTag {
+  id     String @id @default(cuid())
+  linkId String
+  tagId  String
+  link   Link   @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([linkId, tagId])
+  @@map("link_tag")
 }

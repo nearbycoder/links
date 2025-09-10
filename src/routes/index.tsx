@@ -1,9 +1,7 @@
-import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 
 import { getSession } from '@/lib/auth'
-import { authClient } from '@/lib/auth-client'
-import { ThemeToggle } from '@/components/theme-toggle'
 
 const getServerSession = createServerFn({
   method: 'GET',
@@ -20,32 +18,31 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const data = Route.useLoaderData()
-  const router = useRouter()
 
   return (
-    <div>
-      <header className="flex gap-4 justify-center items-center p-4">
-        <Link to="/">Home</Link>
+    <div className="p-6">
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold">Welcome to Link Manager</h1>
+        <p className="text-lg text-muted-foreground">
+          Organize and manage your bookmarks with categories and tags
+        </p>
         {data?.user ? (
-          <>
-            <button
-              className="cursor-pointer"
-              onClick={() => {
-                authClient.signOut()
-                router.navigate({ to: '/auth/login' })
-              }}
-            >
-              Logout
-            </button>
-          </>
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Welcome back, {data.user.name}!
+            </p>
+            <p className="text-sm">
+              Use the sidebar to navigate between Links, Categories, and Tags.
+            </p>
+          </div>
         ) : (
-          <>
-            <Link to="/auth/login">Login</Link>
-            <Link to="/auth/sign-up">Register</Link>
-          </>
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Please log in to access your bookmarks.
+            </p>
+          </div>
         )}
-        <ThemeToggle />
-      </header>
+      </div>
     </div>
   )
 }
