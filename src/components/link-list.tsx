@@ -1,4 +1,6 @@
-import { ExternalLink, Edit, Trash2, Calendar } from 'lucide-react'
+import { Calendar, Edit, ExternalLink, Heart } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { DeleteModal } from './delete-modal'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -9,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formatDistanceToNow } from 'date-fns'
 
 interface Link {
   id: string
@@ -17,6 +18,7 @@ interface Link {
   url: string
   description?: string
   favicon?: string
+  isFavorite: boolean
   category?: {
     id: string
     name: string
@@ -34,12 +36,18 @@ interface Link {
 }
 
 interface LinkListProps {
-  links: Link[]
+  links: Array<Link>
   onEdit: (link: Link) => void
   onDelete: (linkId: string) => void
+  onToggleFavorite?: (linkId: string, isFavorite: boolean) => void
 }
 
-export function LinkList({ links, onEdit, onDelete }: LinkListProps) {
+export function LinkList({
+  links,
+  onEdit,
+  onDelete,
+  onToggleFavorite,
+}: LinkListProps) {
   const handleClick = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer')
   }
@@ -157,6 +165,25 @@ export function LinkList({ links, onEdit, onDelete }: LinkListProps) {
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {onToggleFavorite && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        onToggleFavorite(link.id, !link.isFavorite)
+                      }
+                      className="h-8 w-8 p-0"
+                      title={
+                        link.isFavorite
+                          ? 'Remove from favorites'
+                          : 'Add to favorites'
+                      }
+                    >
+                      <Heart
+                        className={`h-4 w-4 ${link.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+                      />
+                    </Button>
+                  )}
                   <Button
                     variant="ghost"
                     size="sm"
@@ -165,14 +192,11 @@ export function LinkList({ links, onEdit, onDelete }: LinkListProps) {
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onDelete(link.id)}
-                    className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <DeleteModal
+                    title="Delete Link"
+                    description={`Are you sure you want to delete "${link.title}"? This action cannot be undone.`}
+                    onConfirm={() => onDelete(link.id)}
+                  />
                 </div>
               </TableCell>
             </TableRow>

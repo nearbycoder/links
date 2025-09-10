@@ -9,6 +9,7 @@ const updateLinkSchema = z.object({
   description: z.string().optional(),
   categoryId: z.string().optional(),
   tagIds: z.array(z.string()).optional(),
+  isFavorite: z.boolean().optional(),
 })
 
 export const ServerRoute = createServerFileRoute('/api/links/$linkId').methods({
@@ -119,26 +120,41 @@ export const ServerRoute = createServerFileRoute('/api/links/$linkId').methods({
 
       // Update link with transaction to handle tags
       const link = await db.$transaction(async (tx) => {
-        // Update the link
+        // Update the link (exclude relation fields)
+        const { tagIds, ...linkData } = validatedData
+
+        // Prepare update data, explicitly handling categoryId
+        const updateData: any = {
+          title: linkData.title,
+          url: linkData.url,
+          description: linkData.description,
+          favicon,
+          isFavorite: linkData.isFavorite,
+        }
+
+        // Handle categoryId - explicitly set to null if undefined
+        if (linkData.categoryId !== undefined) {
+          updateData.categoryId = linkData.categoryId
+        } else {
+          updateData.categoryId = null
+        }
+
         await tx.link.update({
           where: { id: params.linkId },
-          data: {
-            ...validatedData,
-            favicon,
-          },
+          data: updateData,
         })
 
         // Update tags if provided
-        if (validatedData.tagIds !== undefined) {
+        if (tagIds !== undefined) {
           // Remove existing tags
           await tx.linkTag.deleteMany({
             where: { linkId: params.linkId },
           })
 
           // Add new tags
-          if (validatedData.tagIds.length > 0) {
+          if (tagIds.length > 0) {
             await tx.linkTag.createMany({
-              data: validatedData.tagIds.map((tagId) => ({
+              data: tagIds.map((tagId) => ({
                 linkId: params.linkId,
                 tagId,
               })),
@@ -162,13 +178,85 @@ export const ServerRoute = createServerFileRoute('/api/links/$linkId').methods({
 
       return Response.json(link)
     } catch (error) {
+      console.error('Error updating link:', error)
       if (error instanceof z.ZodError) {
         return new Response(JSON.stringify({ errors: error.issues }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
         })
       }
-      return new Response('Internal Server Error', { status: 500 })
+      return new Response(
+        JSON.stringify({
+          error: 'Internal Server Error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+    }
+  },
+
+  PATCH: async ({ params, request }) => {
+    const session = await getSession()
+    if (!session?.user) {
+      return new Response('Unauthorized', { status: 401 })
+    }
+
+    try {
+      const body = await request.json()
+      const { isFavorite } = body
+
+      if (typeof isFavorite !== 'boolean') {
+        return new Response(
+          JSON.stringify({ error: 'isFavorite must be a boolean' }),
+          {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        )
+      }
+
+      // Check if link exists and belongs to user
+      const existingLink = await db.link.findFirst({
+        where: {
+          id: params.linkId,
+          userId: session.user.id,
+        },
+      })
+
+      if (!existingLink) {
+        return new Response('Link not found', { status: 404 })
+      }
+
+      // Update only the isFavorite field
+      const link = await db.link.update({
+        where: { id: params.linkId },
+        data: { isFavorite },
+        include: {
+          category: true,
+          tags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      })
+
+      return Response.json(link)
+    } catch (error) {
+      console.error('Error updating link favorite status:', error)
+      return new Response(
+        JSON.stringify({
+          error: 'Internal Server Error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
     }
   },
 

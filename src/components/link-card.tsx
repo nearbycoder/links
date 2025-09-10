@@ -1,13 +1,14 @@
 import {
   ExternalLink,
   Edit,
-  Trash2,
   Calendar,
   Link as LinkIcon,
+  Heart,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { DeleteModal } from './delete-modal'
 import { formatDistanceToNow } from 'date-fns'
 
 interface Link {
@@ -16,6 +17,7 @@ interface Link {
   url: string
   description?: string
   favicon?: string
+  isFavorite: boolean
   category?: {
     id: string
     name: string
@@ -36,9 +38,15 @@ interface LinkCardProps {
   link: Link
   onEdit: () => void
   onDelete: () => void
+  onToggleFavorite?: (linkId: string, isFavorite: boolean) => void
 }
 
-export function LinkCard({ link, onEdit, onDelete }: LinkCardProps) {
+export function LinkCard({
+  link,
+  onEdit,
+  onDelete,
+  onToggleFavorite,
+}: LinkCardProps) {
   const handleClick = () => {
     window.open(link.url, '_blank', 'noopener,noreferrer')
   }
@@ -88,6 +96,24 @@ export function LinkCard({ link, onEdit, onDelete }: LinkCardProps) {
           </div>
 
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+            {onToggleFavorite && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onToggleFavorite(link.id, !link.isFavorite)
+                }}
+                className="h-8 w-8 p-0 hover:bg-muted"
+                title={
+                  link.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                }
+              >
+                <Heart
+                  className={`h-4 w-4 ${link.isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+                />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -96,14 +122,11 @@ export function LinkCard({ link, onEdit, onDelete }: LinkCardProps) {
             >
               <Edit className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onDelete}
-              className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            <DeleteModal
+              title="Delete Link"
+              description={`Are you sure you want to delete "${link.title}"? This action cannot be undone.`}
+              onConfirm={onDelete}
+            />
           </div>
         </div>
       </CardHeader>

@@ -1,7 +1,8 @@
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TagForm } from './tag-form'
+import { DeleteModal } from './delete-modal'
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -39,13 +40,7 @@ export function TagCard({ tag }: TagCardProps) {
   })
 
   const handleDelete = () => {
-    if (
-      confirm(
-        `Are you sure you want to delete the tag "${tag.name}"? This will remove it from all associated links.`,
-      )
-    ) {
-      deleteTagMutation.mutate(tag.id)
-    }
+    deleteTagMutation.mutate(tag.id)
   }
 
   return (
@@ -72,14 +67,12 @@ export function TagCard({ tag }: TagCardProps) {
               queryClient.invalidateQueries({ queryKey: ['tags'] })
             }
           />
-          <Button
-            variant="ghost"
+          <DeleteModal
+            title="Delete Tag"
+            description={`Are you sure you want to delete the tag "${tag.name}"? This will remove it from all associated links.`}
+            onConfirm={handleDelete}
             size="sm"
-            onClick={handleDelete}
-            className="h-6 w-6 p-0 text-destructive hover:text-destructive bg-background border"
-          >
-            <Trash2 className="h-3 w-3" />
-          </Button>
+          />
         </div>
       </div>
     </div>

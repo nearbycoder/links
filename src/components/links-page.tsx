@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { Grid, List, Search } from 'lucide-react'
+import { Grid, Heart, List, Search } from 'lucide-react'
 import { LinkForm } from './link-form'
 import { LinkCard } from './link-card'
 import { LinkList } from './link-list'
@@ -23,6 +23,7 @@ interface Link {
   url: string
   description?: string
   favicon?: string
+  isFavorite: boolean
   category?: {
     id: string
     name: string
@@ -59,6 +60,7 @@ export function LinksPage() {
   const searchQuery = search.search || ''
   const selectedCategory = search.category || ''
   const selectedTag = search.tag || ''
+  const showFavoritesOnly = search.favoritesOnly === true
 
   const [viewMode, setViewMode] = useLocalStorage<'grid' | 'list'>(
     'links-view-mode',
@@ -73,6 +75,7 @@ export function LinksPage() {
     search?: string
     category?: string
     tag?: string
+    favoritesOnly?: boolean
   }) => {
     navigate({
       search: (prev) => ({
@@ -85,7 +88,13 @@ export function LinksPage() {
 
   // Fetch links
   const { data: links = [], isLoading: linksLoading } = useQuery({
-    queryKey: ['links', searchQuery, selectedCategory, selectedTag],
+    queryKey: [
+      'links',
+      searchQuery,
+      selectedCategory,
+      selectedTag,
+      showFavoritesOnly,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams()
       if (searchQuery) params.append('search', searchQuery)
@@ -97,6 +106,7 @@ export function LinksPage() {
         params.append('categoryId', selectedCategory)
       if (selectedTag && selectedTag !== 'all' && selectedTag !== '')
         params.append('tagId', selectedTag)
+      if (showFavoritesOnly) params.append('favoritesOnly', 'true')
 
       const response = await fetch(`/api/links?${params}`)
       if (!response.ok) throw new Error('Failed to fetch links')
@@ -136,10 +146,31 @@ export function LinksPage() {
     },
   })
 
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: async ({
+      linkId,
+      isFavorite,
+    }: {
+      linkId: string
+      isFavorite: boolean
+    }) => {
+      const response = await fetch(`/api/links/${linkId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isFavorite }),
+      })
+      if (!response.ok) throw new Error('Failed to update favorite status')
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['links'] })
+    },
+  })
+
   const handleDeleteLink = (linkId: string) => {
-    if (confirm('Are you sure you want to delete this link?')) {
-      deleteLinkMutation.mutate(linkId)
-    }
+    deleteLinkMutation.mutate(linkId)
   }
 
   const handleEditLink = (link: Link) => {
@@ -149,6 +180,10 @@ export function LinksPage() {
   const handleEditSuccess = () => {
     setEditingLink(null)
     queryClient.invalidateQueries({ queryKey: ['links'] })
+  }
+
+  const handleToggleFavorite = (linkId: string, isFavorite: boolean) => {
+    toggleFavoriteMutation.mutate({ linkId, isFavorite })
   }
 
   return (
@@ -161,6 +196,21 @@ export function LinksPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            variant={showFavoritesOnly ? 'default' : 'outline'}
+            size="sm"
+            onClick={() =>
+              updateSearchParams({ favoritesOnly: !showFavoritesOnly })
+            }
+            className={
+              showFavoritesOnly ? 'bg-primary text-primary-foreground' : ''
+            }
+            title={showFavoritesOnly ? 'Show all links' : 'Show favorites only'}
+          >
+            <Heart
+              className={`h-4 w-4 ${showFavoritesOnly ? 'fill-current' : ''}`}
+            />
+          </Button>
           <Button
             variant={viewMode === 'grid' ? 'default' : 'outline'}
             size="sm"
@@ -282,6 +332,7 @@ export function LinksPage() {
                 link={link}
                 onDelete={() => handleDeleteLink(link.id)}
                 onEdit={() => handleEditLink(link)}
+                onToggleFavorite={handleToggleFavorite}
               />
             ))}
           </div>
@@ -290,6 +341,7 @@ export function LinksPage() {
             links={links}
             onDelete={handleDeleteLink}
             onEdit={handleEditLink}
+            onToggleFavorite={handleToggleFavorite}
           />
         )}
       </div>

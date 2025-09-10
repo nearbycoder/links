@@ -1,8 +1,9 @@
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { CategoryForm } from './category-form'
+import { DeleteModal } from './delete-modal'
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -41,13 +42,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
   })
 
   const handleDelete = () => {
-    if (
-      confirm(
-        `Are you sure you want to delete the category "${category.name}"? This will remove it from all associated links.`,
-      )
-    ) {
-      deleteCategoryMutation.mutate(category.id)
-    }
+    deleteCategoryMutation.mutate(category.id)
   }
 
   return (
@@ -68,14 +63,11 @@ export function CategoryCard({ category }: CategoryCardProps) {
                 queryClient.invalidateQueries({ queryKey: ['categories'] })
               }
             />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDelete}
-              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            <DeleteModal
+              title="Delete Category"
+              description={`Are you sure you want to delete the category "${category.name}"? This will remove it from all associated links.`}
+              onConfirm={handleDelete}
+            />
           </div>
         </div>
       </CardHeader>

@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
@@ -12,6 +12,7 @@ const linksSearchSchema = z.object({
   search: z.string().optional(),
   category: z.string().optional(),
   tag: z.string().optional(),
+  favoritesOnly: z.boolean().optional(),
 })
 
 export const Route = createFileRoute('/links')({
@@ -20,7 +21,7 @@ export const Route = createFileRoute('/links')({
   loader: async () => {
     const session = await getServerSession()
     if (!session?.user) {
-      throw new Error('Unauthorized')
+      throw redirect({ to: '/auth/login' })
     }
     return { user: session.user }
   },

@@ -22,6 +22,7 @@ export const ServerRoute = createServerFileRoute('/api/links').methods({
     const search = url.searchParams.get('search') || ''
     const categoryId = url.searchParams.get('categoryId')
     const tagId = url.searchParams.get('tagId')
+    const favoritesOnly = url.searchParams.get('favoritesOnly') === 'true'
 
     const links = await db.link.findMany({
       where: {
@@ -41,6 +42,7 @@ export const ServerRoute = createServerFileRoute('/api/links').methods({
             },
           },
         }),
+        ...(favoritesOnly && { isFavorite: true }),
       },
       include: {
         category: true,

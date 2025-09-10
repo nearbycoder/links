@@ -111,6 +111,7 @@ model Link {
   url         String
   description String?
   favicon     String?
+  isFavorite  Boolean   @default(false)
   categoryId  String?
   category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   userId      String
