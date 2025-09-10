@@ -14,6 +14,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TagsRouteImport } from './routes/tags'
 import { Route as LinksRouteImport } from './routes/links'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as ApiKeysRouteImport } from './routes/api-keys'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -40,6 +41,11 @@ const LinksRoute = LinksRouteImport.update({
 const CategoriesRoute = CategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiKeysRoute = ApiKeysRouteImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -96,6 +102,7 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api-keys': typeof ApiKeysRoute
   '/categories': typeof CategoriesRoute
   '/links': typeof LinksRoute
   '/tags': typeof TagsRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api-keys': typeof ApiKeysRoute
   '/categories': typeof CategoriesRoute
   '/links': typeof LinksRoute
   '/tags': typeof TagsRoute
@@ -113,6 +121,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api-keys': typeof ApiKeysRoute
   '/categories': typeof CategoriesRoute
   '/links': typeof LinksRoute
   '/tags': typeof TagsRoute
@@ -123,16 +132,25 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api-keys'
     | '/categories'
     | '/links'
     | '/tags'
     | '/auth/login'
     | '/auth/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/categories' | '/links' | '/tags' | '/auth/login' | '/auth/sign-up'
+  to:
+    | '/'
+    | '/api-keys'
+    | '/categories'
+    | '/links'
+    | '/tags'
+    | '/auth/login'
+    | '/auth/sign-up'
   id:
     | '__root__'
     | '/'
+    | '/api-keys'
     | '/categories'
     | '/links'
     | '/tags'
@@ -142,6 +160,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiKeysRoute: typeof ApiKeysRoute
   CategoriesRoute: typeof CategoriesRoute
   LinksRoute: typeof LinksRoute
   TagsRoute: typeof TagsRoute
@@ -234,6 +253,13 @@ declare module '@tanstack/react-router' {
       path: '/categories'
       fullPath: '/categories'
       preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api-keys': {
+      id: '/api-keys'
+      path: '/api-keys'
+      fullPath: '/api-keys'
+      preLoaderRoute: typeof ApiKeysRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -350,6 +376,7 @@ const ApiTagsServerRouteWithChildren = ApiTagsServerRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiKeysRoute: ApiKeysRoute,
   CategoriesRoute: CategoriesRoute,
   LinksRoute: LinksRoute,
   TagsRoute: TagsRoute,

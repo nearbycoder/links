@@ -1,9 +1,11 @@
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { getWebRequest } from '@tanstack/react-start/server'
+import { apiKey } from 'better-auth/plugins'
 import { db } from './db'
 
 export const auth = betterAuth({
+  plugins: [apiKey()],
   emailAndPassword: {
     enabled: true,
   },

@@ -1,5 +1,12 @@
 import { Link, useRouter } from '@tanstack/react-router'
-import { FolderOpen, Home, Link as LinkIcon, LogOut, Tag } from 'lucide-react'
+import {
+  FolderOpen,
+  Home,
+  Key,
+  Link as LinkIcon,
+  LogOut,
+  Tag,
+} from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import {
   Sidebar,
@@ -91,6 +98,19 @@ export function AppSidebar() {
                     <Tag className="h-4 w-4" />
                     <span className="group-data-[collapsible=icon]:hidden">
                       Tags
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem className="flex justify-center">
+                <SidebarMenuButton asChild tooltip="API Keys">
+                  <Link
+                    to="/api-keys"
+                    className="w-full display-flex group-data-[collapsible=icon]:justify-center"
+                  >
+                    <Key className="h-4 w-4" />
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      API Keys
                     </span>
                   </Link>
                 </SidebarMenuButton>

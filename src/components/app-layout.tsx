@@ -2,6 +2,8 @@ import { Search } from 'lucide-react'
 import { AppSidebar } from './app-sidebar'
 import { ThemeToggle } from './theme-toggle'
 import { SearchProvider, useSearch } from './search-provider'
+import { Toaster } from '@/components/ui/sonner'
+
 import {
   SidebarInset,
   SidebarProvider,
@@ -21,6 +23,7 @@ function AppLayoutContent({ children }: AppLayoutProps) {
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
       <SidebarRail />
+      <Toaster />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <div className="flex items-center gap-2">
