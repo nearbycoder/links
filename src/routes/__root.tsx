@@ -1,4 +1,9 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Scripts,
+  createRootRoute,
+  useLocation,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanstackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -7,6 +12,7 @@ import { useState } from 'react'
 import appCss from '../styles.css?url'
 import { ThemeProvider } from '../components/theme-provider'
 import { AppLayout } from '../components/app-layout'
+import { AuthLayout } from '../components/auth-layout'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -52,14 +58,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <AppLayout>{children}</AppLayout>
-          </ThemeProvider>
+          <LayoutWrapper>{children}</LayoutWrapper>
         </QueryClientProvider>
         <TanstackDevtools
           config={{
@@ -75,5 +74,25 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function LayoutWrapper({ children }: { children: React.ReactNode }) {
+  const location = useLocation()
+  const isAuthRoute = location.pathname.startsWith('/auth')
+
+  if (isAuthRoute) {
+    return <AuthLayout>{children}</AuthLayout>
+  }
+
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <AppLayout>{children}</AppLayout>
+    </ThemeProvider>
   )
 }
