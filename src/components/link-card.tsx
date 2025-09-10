@@ -1,15 +1,15 @@
 import {
-  ExternalLink,
-  Edit,
   Calendar,
-  Link as LinkIcon,
+  Edit,
+  ExternalLink,
   Heart,
+  Link as LinkIcon,
 } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { DeleteModal } from './delete-modal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { DeleteModal } from './delete-modal'
-import { formatDistanceToNow } from 'date-fns'
 
 interface Link {
   id: string

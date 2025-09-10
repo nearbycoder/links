@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Trash2, AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Trash2 } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,

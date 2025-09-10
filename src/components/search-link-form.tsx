@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import {
@@ -27,7 +28,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
 
 const linkSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -54,8 +54,8 @@ interface Tag {
 interface SearchLinkFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  categories: Category[]
-  tags: Tag[]
+  categories: Array<Category>
+  tags: Array<Tag>
   onSuccess: () => void
 }
 
@@ -66,7 +66,7 @@ export function SearchLinkForm({
   tags,
   onSuccess,
 }: SearchLinkFormProps) {
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<Array<string>>([])
 
   const form = useForm<LinkFormData>({
     resolver: zodResolver(linkSchema),

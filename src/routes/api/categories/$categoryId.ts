@@ -1,7 +1,7 @@
 import { createServerFileRoute } from '@tanstack/react-start/server'
+import { z } from 'zod'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
-import { z } from 'zod'
 
 const updateCategorySchema = z.object({
   name: z.string().min(1, 'Name is required').optional(),

@@ -1,11 +1,11 @@
 import { Edit } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { TagForm } from './tag-form'
-import { DeleteModal } from './delete-modal'
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { DeleteModal } from './delete-modal'
+import { TagForm } from './tag-form'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 interface Tag {
   id: string

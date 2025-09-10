@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Plus, X } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -29,7 +30,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { toast } from 'sonner'
 
 const linkSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -54,15 +54,15 @@ interface Tag {
 }
 
 interface LinkFormProps {
-  categories: Category[]
-  tags: Tag[]
+  categories: Array<Category>
+  tags: Array<Tag>
   onSuccess: () => void
   link?: any // For editing existing links
 }
 
 export function LinkForm({ categories, tags, onSuccess, link }: LinkFormProps) {
   const [open, setOpen] = useState(!!link) // Open automatically if link is provided for editing
-  const [selectedTags, setSelectedTags] = useState<string[]>(
+  const [selectedTags, setSelectedTags] = useState<Array<string>>(
     link?.tags?.map((t: any) => t.tag.id) || [],
   )
 

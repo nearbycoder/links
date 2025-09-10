@@ -2,4 +2,15 @@
 
 import { tanstackConfig } from '@tanstack/eslint-config'
 
-export default [...tanstackConfig]
+export default [
+  ...tanstackConfig,
+  {
+    ignores: [
+      '**/.nitro/**',
+      '**/.tanstack/**',
+      '**/.output/**',
+      '**/.vinxi/**',
+      './src/components/ui/*',
+    ],
+  },
+]

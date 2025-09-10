@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Card, CardContent } from '@/components/ui/card'
 import { TagForm } from './tag-form'
 import { TagCard } from './tag-card'
+import { Card, CardContent } from '@/components/ui/card'
 
 interface Tag {
   id: string
