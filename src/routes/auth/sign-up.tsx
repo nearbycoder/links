@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import {
   ArrowRight,
   Check,
@@ -14,6 +14,7 @@ import {
   User,
 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -62,6 +63,7 @@ function RouteComponent() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const router = useRouter()
 
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
@@ -93,7 +95,7 @@ function RouteComponent() {
 
       if (authData) {
         setSuccess(true)
-        console.log('Sign up successful:', authData)
+        router.navigate({ to: '/' })
         // Redirect will be handled by the auth system
       }
     } catch (err) {
@@ -138,6 +140,9 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-md space-y-8">
         {/* Logo/Brand Section */}
         <div className="text-center">

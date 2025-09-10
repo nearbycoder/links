@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -41,6 +42,7 @@ function RouteComponent() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const router = useRouter()
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -67,8 +69,7 @@ function RouteComponent() {
       }
 
       if (authData) {
-        console.log('Login successful:', authData)
-        // Redirect will be handled by the auth system
+        router.navigate({ to: '/' })
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.')
@@ -79,6 +80,9 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-md space-y-8">
         {/* Logo/Brand Section */}
         <div className="text-center">
@@ -169,7 +173,7 @@ function RouteComponent() {
                   )}
                 />
 
-                <div className="flex items-center justify-between mb-4">
+                {/* <div className="flex items-center justify-between mb-4">
                   <FormField
                     control={form.control}
                     name="remember"
@@ -195,10 +199,10 @@ function RouteComponent() {
                   >
                     Forgot password?
                   </Link>
-                </div>
+                </div> */}
               </CardContent>
 
-              <CardFooter className="flex flex-col space-y-4">
+              <CardFooter className="flex flex-col space-y-4 mt-4">
                 <Button
                   type="submit"
                   className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium"
