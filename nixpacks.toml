@@ -1,0 +1,24 @@
+# nixpacks.toml - Nixpacks configuration
+
+[build]
+# Specify Node.js version
+nodexVersion = "24"
+
+# Install dependencies
+cmds = ["npm install"]
+
+# Build step (if your project needs it)
+cacheDirectories = ["node_modules"]
+
+[start]
+# Command to run your application
+cmd = "npm start"
+
+[variables]
+# Environment variables
+NODE_ENV = "production"
+NPM_CONFIG_PRODUCTION = "true"
+
+# Optional: Expose ports
+[metadata]
+port = "3000"
