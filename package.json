@@ -2,13 +2,10 @@
   "name": "boilerplate",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": "23"
-  },
   "scripts": {
     "dev": "vite dev --port 3000 --host 0.0.0.0",
     "start": "node .output/server/index.mjs",
-    "build": "vite build",
+    "build": "vite build --mode production",
     "serve": "vite preview",
     "test": "vitest run",
     "lint": "eslint",
