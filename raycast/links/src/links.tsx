@@ -1,6 +1,6 @@
 import { ActionPanel, Action, List, getPreferenceValues, Form, showToast, Toast } from "@raycast/api";
 import { useState } from "react";
-import { useFetcher } from "../utils/useFetcher";
+import { fetcher, useFetcher } from "../utils/useFetcher";
 import { BASE_URL } from "../constants";
 
 type Category = {
@@ -98,6 +98,16 @@ export default function Command() {
                   title="Edit Link"
                   target={<EditLinkForm link={item} onUpdate={revalidate} />}
                   shortcut={{ modifiers: ["cmd"], key: "e" }}
+                />
+                <Action.SubmitForm
+                  title="Delete Link"
+                  style={Action.Style.Destructive}
+                  shortcut={{ modifiers: ["cmd"], key: "d" }}
+                  onSubmit={() => {
+                    fetcher(`/api/links/${item.id}`, { method: "DELETE" }).then(() => {
+                      revalidate();
+                    });
+                  }}
                 />
               </ActionPanel>
             }

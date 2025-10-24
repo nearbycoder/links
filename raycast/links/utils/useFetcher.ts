@@ -13,3 +13,17 @@ export const useFetcher = <T = unknown>(endpoint: string, options: object = {}) 
     },
   });
 };
+
+export const fetcher = async <T = unknown>(endpoint: string, options: object = {}) => {
+  const preferences = getPreferenceValues<{ apiKey: string }>();
+
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      "x-api-key": preferences.apiKey,
+      ...(options as any)?.headers,
+    },
+  });
+
+  return response;
+};
