@@ -94,6 +94,15 @@ export default function Command() {
             actions={
               <ActionPanel>
                 <Action.OpenInBrowser url={item.url} />
+                <Action.SubmitForm
+                  title="Open in Incognito Window"
+                  shortcut={{ modifiers: ["cmd"], key: "i" }}
+                  onSubmit={async () => {
+                    const cmd = `open -na "Google Chrome" --args --incognito "${item.url}"`;
+                    const { execa } = await import("execa");
+                    await execa("bash", ["-lc", cmd]);
+                  }}
+                />
                 <Action.Push
                   title="Edit Link"
                   target={<EditLinkForm link={item} onUpdate={revalidate} />}
