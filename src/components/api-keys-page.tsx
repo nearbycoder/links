@@ -134,6 +134,7 @@ export function ApiKeysPage() {
         prefix: newApiKey.prefix || undefined,
         permissions,
         metadata,
+        rateLimitEnabled: false,
       })
 
       if (error) {
