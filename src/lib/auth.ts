@@ -5,7 +5,14 @@ import { apiKey } from 'better-auth/plugins'
 import { db } from './db'
 
 export const auth = betterAuth({
-  plugins: [apiKey()],
+  plugins: [
+    apiKey({
+      rateLimit: { enabled: false },
+      keyExpiration: {
+        maxExpiresIn: 94608000,
+      },
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
   },

@@ -134,7 +134,6 @@ export function ApiKeysPage() {
         prefix: newApiKey.prefix || undefined,
         permissions,
         metadata,
-        rateLimitEnabled: false,
       })
 
       if (error) {
@@ -301,7 +300,7 @@ export function ApiKeysPage() {
                     <SelectItem value="2592000">1 month</SelectItem>
                     <SelectItem value="7776000">3 months</SelectItem>
                     <SelectItem value="31536000">1 year</SelectItem>
-                    <SelectItem value="0">Never</SelectItem>
+                    <SelectItem value="94608000">3 years</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
